@@ -4,11 +4,8 @@ import 'dart:ui';
 class HomePge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final height = window.physicalSize.height;
-    return Container(
-      child: MainLayout(),
-      width: double.infinity,
-      height: height,
+    return new Scaffold(
+      body: MainLayout(),
     );
   }
 }

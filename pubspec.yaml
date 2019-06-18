@@ -42,11 +42,16 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assetImg/black_bg.png
-    - assetImg/banner.png
-    - assetImg/message.png
-    - assetImg/ic_launcher.png
-    - assetImg/top_img.png
+    - asset/black_bg.png
+    - asset/banner.png
+    - asset/message.png
+    - asset/ic_launcher.png
+    - asset/top_img.png
+    - asset/ic_my_more.png
+    - asset/me1.png
+    - asset/me2.png
+    - asset/me3.png
+    - asset/me4.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

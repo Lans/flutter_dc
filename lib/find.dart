@@ -147,7 +147,7 @@ class _GridViewLayoutState extends State<GridViewLayout> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: new Image.asset(
-                  "assetImg/ic_launcher.png",
+                  "asset/ic_launcher.png",
                   width: 50,
                   height: 50,
                 ),

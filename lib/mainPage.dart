@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dc/find.dart';
+import 'package:flutter_dc/me.dart';
 import 'home.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -17,7 +18,7 @@ class _MyHomePage extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    _textWidget = [HomePge(), FindPage(), Text("我的")];
+    _textWidget = [HomePge(), FindPage(), MePage()];
   }
 
   @override

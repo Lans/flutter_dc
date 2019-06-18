@@ -18,10 +18,10 @@ class MainLayout extends StatelessWidget {
           child: Column(children: <Widget>[
         Stack(
           children: <Widget>[
-            Image.asset("assetImg/black_bg.png"),
+            Image.asset("asset/black_bg.png"),
             Padding(
               padding: EdgeInsets.fromLTRB(10, 100, 10, 0),
-              child: Image.asset("assetImg/banner.png"),
+              child: Image.asset("asset/banner.png"),
             ),
           ],
         ),
@@ -31,7 +31,7 @@ class MainLayout extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               Image.asset(
-                "assetImg/message.png",
+                "asset/message.png",
                 width: 100,
                 height: 20,
               ),
@@ -49,7 +49,7 @@ class MainLayout extends StatelessWidget {
             child: Padding(
               padding: EdgeInsets.only(bottom: 10),
               child: Image.asset(
-                "assetImg/top_img.png",
+                "asset/top_img.png",
                 width: 100,
                 height: 20,
               ),
@@ -106,7 +106,7 @@ class ListState extends State<ListLayout> {
                   child: Row(
                     children: <Widget>[
                       Image.asset(
-                        "assetImg/ic_launcher.png",
+                        "asset/ic_launcher.png",
                         width: 50,
                         height: 50,
                       ),

@@ -2,6 +2,8 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:package_info/package_info.dart';
 
+import 'login.dart';
+
 class SettingPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -69,6 +71,11 @@ class SettingPageState extends State<SettingPage> {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(60)),
                   onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => LoginPage(),
+                        ));
                   }),
             ),
           ],

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_dc/loadingDialog.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -12,6 +13,7 @@ class LoginPage extends StatefulWidget {
 
 class LoginPageState extends State<LoginPage> {
   Timer _timer;
+
   //倒计时数值
   var countdownTime = 0;
 
@@ -98,16 +100,33 @@ class LoginPageState extends State<LoginPage> {
                 Padding(
                   padding: const EdgeInsets.only(top: 50.0),
                   child: MaterialButton(
-                      textColor: Colors.white,
-                      minWidth: window.physicalSize.width,
-                      color: Color.fromRGBO(21, 201, 187, 1),
-                      child: Text(
-                        "登录",
-                        style: TextStyle(fontSize: 13),
-                      ),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(60)),
-                      onPressed: () {}),
+                    textColor: Colors.white,
+                    minWidth: window.physicalSize.width,
+                    color: Color.fromRGBO(21, 201, 187, 1),
+                    child: Text(
+                      "登录",
+                      style: TextStyle(fontSize: 13),
+                    ),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(60)),
+                    onPressed: () {
+                      showDialog(
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (BuildContext context) {
+                            return LoadingDialog(
+                              titleStyle: TextStyle(fontSize: 12),
+                            );
+                          });
+                      ///测试dialog消失
+                      Future(() {
+                        Future.delayed(Duration(seconds: 3), () {
+                          print("dialog消失了");
+                          Navigator.pop(context);
+                        });
+                      });
+                    },
+                  ),
                 ),
               ],
             ),

@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_dc/setting.dart';
 
 class MePage extends StatefulWidget {
   @override
@@ -10,6 +11,7 @@ class MePage extends StatefulWidget {
 }
 
 class MePageState extends State<MePage> {
+  final number = "12313141414";
   final list = ["", "我的征信", "我的评估", "帮助中心", "其他设置"];
   final imgList = [
     "asset/ic_my_more.png",
@@ -40,7 +42,7 @@ class MePageState extends State<MePage> {
                       ),
                       Expanded(
                         child: Text(
-                          "13125097341",
+                          number,
                           textAlign: TextAlign.end,
                           style: TextStyle(
                               color: Colors.black,
@@ -60,34 +62,44 @@ class MePageState extends State<MePage> {
               ),
             );
           } else {
-            return Padding(
-              padding: const EdgeInsets.only(left: 15, right: 15),
-              child: Container(
-                height: 40,
-                child: Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: Row(
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.only(right: 8),
-                            child: Image.asset(
-                              imgList[index],
-                              width: 20,
+            return InkWell(
+              onTap: () {
+                if (index == list.length-1) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => SettingPage()),
+                  );
+                }
+              },
+              child: Padding(
+                padding: const EdgeInsets.only(left: 15, right: 15),
+                child: Container(
+                  height: 40,
+                  child: Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: Row(
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.only(right: 8),
+                              child: Image.asset(
+                                imgList[index],
+                                width: 20,
+                              ),
                             ),
-                          ),
-                          Text(
-                            list[index],
-                            style: TextStyle(fontSize: 14),
-                          ),
-                        ],
+                            Text(
+                              list[index],
+                              style: TextStyle(fontSize: 14),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    Image.asset(
-                      imgList[0],
-                      width: 10,
-                    ),
-                  ],
+                      Image.asset(
+                        imgList[0],
+                        width: 10,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             );

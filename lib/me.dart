@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_dc/setting.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MePage extends StatefulWidget {
   @override
@@ -20,6 +20,13 @@ class MePageState extends State<MePage> {
     "asset/me3.png",
     "asset/me4.png",
   ];
+  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+
+  Future<String> _getPhone() async {
+    final SharedPreferences prefs = await _prefs;
+    final String num = (prefs.getString('userTel') ?? "");
+    return num;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,14 +48,31 @@ class MePageState extends State<MePage> {
                             fontWeight: FontWeight.bold),
                       ),
                       Expanded(
-                        child: Text(
-                          number,
-                          textAlign: TextAlign.end,
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold),
-                        ),
+                        child: FutureBuilder<String>(
+                            future: _getPhone(),
+                            builder: (BuildContext context,
+                                AsyncSnapshot<String> syn) {
+                              if (syn.connectionState == ConnectionState.done) {
+                                if (syn.data.toString().isNotEmpty) {
+                                  return Text(
+                                    syn.data.toString(),
+                                    textAlign: TextAlign.end,
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold),
+                                  );
+                                }
+                              }
+                              return Text(
+                                "请重新登录",
+                                textAlign: TextAlign.end,
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold),
+                              );
+                            }),
                       ),
                     ],
                   ),
@@ -64,11 +88,8 @@ class MePageState extends State<MePage> {
           } else {
             return InkWell(
               onTap: () {
-                if (index == list.length-1) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => SettingPage()),
-                  );
+                if (index == list.length - 1) {
+                  Navigator.pushNamed(context, "/setting");
                 }
               },
               child: Padding(

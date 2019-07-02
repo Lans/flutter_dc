@@ -1,8 +1,8 @@
 import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:package_info/package_info.dart';
-
-import 'login.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingPage extends StatefulWidget {
   @override
@@ -71,11 +71,12 @@ class SettingPageState extends State<SettingPage> {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(60)),
                   onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => LoginPage(),
-                        ));
+                    SharedPreferences.getInstance().then((sp) {
+                      sp.clear();
+                    }).whenComplete(() {
+                      Navigator.pushNamedAndRemoveUntil(
+                          context, "/login", (Route<dynamic> route) => false);
+                    });
                   }),
             ),
           ],

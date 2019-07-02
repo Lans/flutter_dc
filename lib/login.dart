@@ -1,8 +1,16 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:ui';
 
+import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dc/loadingDialog.dart';
+import 'package:flutter_dc/Utils/Strings.dart';
+import 'package:flutter_dc/http/ApiUrl.dart';
+import 'package:multiple_dialog/multiple_dialog.dart';
+import 'package:package_info/package_info.dart';
+import 'package:toast/toast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'bean/login_bean.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -12,6 +20,8 @@ class LoginPage extends StatefulWidget {
 }
 
 class LoginPageState extends State<LoginPage> {
+  String telStr = "13800000000";
+  String codeStr = "123456";
   Timer _timer;
 
   //倒计时数值
@@ -43,7 +53,7 @@ class LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
-        padding: EdgeInsets.only(top: 120, left: 20, right: 20),
+        padding: EdgeInsets.only(top: 100, left: 20, right: 20),
         child: Column(
           children: <Widget>[
             Image.asset(
@@ -51,16 +61,20 @@ class LoginPageState extends State<LoginPage> {
               width: 80,
             ),
             Padding(
-              padding: const EdgeInsets.only(top: 100.0),
+              padding: const EdgeInsets.only(top: 90.0),
               child: Column(
                 children: <Widget>[
                   TextField(
-                    keyboardType: TextInputType.number,
+                    keyboardType: TextInputType.phone,
                     decoration: InputDecoration(
                       hintText: "请输入手机号",
                     ),
                     autofocus: true,
                     maxLength: 11,
+                    onChanged: (tel) {
+                      telStr = tel;
+                    },
+                    controller: TextEditingController(text: "13800000000"),
                   ),
                   Stack(
                     alignment: Alignment.centerRight,
@@ -71,9 +85,10 @@ class LoginPageState extends State<LoginPage> {
                           hintText: "请输入验证码",
                         ),
                         maxLength: 6,
-                        onChanged: (data) {
-                          print("验证码$data");
+                        onChanged: (code) {
+                          codeStr = code;
                         },
+                        controller: TextEditingController(text: "123456"),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(bottom: 20),
@@ -108,22 +123,7 @@ class LoginPageState extends State<LoginPage> {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(60)),
                 onPressed: () {
-                  showDialog(
-                      context: context,
-                      barrierDismissible: false,
-                      builder: (BuildContext context) {
-                        return LoadingDialog(
-                          titleStyle: TextStyle(fontSize: 12),
-                        );
-                      });
-
-                  ///测试dialog消失
-                  Future(() {
-                    Future.delayed(Duration(seconds: 3), () {
-                      print("dialog消失了");
-                      Navigator.pop(context);
-                    });
-                  });
+                  login(telStr, codeStr);
                 },
               ),
             ),
@@ -139,5 +139,56 @@ class LoginPageState extends State<LoginPage> {
     if (_timer != null) {
       _timer.cancel();
     }
+  }
+
+  void login(String telStr, String codeStr) {
+    if (telStr.isEmpty) {
+      Toast.show("手机号不能为空", context, gravity: Toast.CENTER);
+      return;
+    }
+    if (codeStr.isEmpty) {
+      Toast.show("验证码不能为空", context, gravity: Toast.CENTER);
+      return;
+    }
+    loginHttp();
+    showLoadingDialog(context: context, barrierDismissible: true);
+  }
+
+  loginHttp() async {
+    String ver = "";
+    String model = "";
+    String id = "";
+    PackageInfo.fromPlatform()
+        .then((packageInfo) => {
+              ver = packageInfo.version,
+            })
+        .whenComplete(() {
+      DeviceInfoPlugin()
+          .androidInfo
+          .then((info) => {model = info.model, id = info.androidId})
+          .whenComplete(() {
+        ApiUrl().loginHttp(telStr, codeStr, ver, model, id).then((res) {
+          var json = jsonEncode(res.data);
+          var userMap = jsonDecode(json);
+          var loginBean = LoginBean.fromJson(userMap);
+          if (loginBean.code == 1000) {
+            Navigator.pop(context);
+            Toast.show(Strings.loginSuccess, context);
+            SharedPreferences.getInstance()
+              ..then((sp) {
+                sp.setString("userId", loginBean.data.userId.toString());
+                sp.setString("userTel", loginBean.data.phone.toString());
+              }).whenComplete(() {
+                Navigator.pushNamed(context, "/");
+              });
+          } else {
+            Toast.show(loginBean.msg, context);
+          }
+        }).catchError((e) {
+          print(Strings.errorMsg + e.toString());
+          Navigator.pop(context);
+        });
+      });
+    });
   }
 }

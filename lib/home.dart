@@ -4,15 +4,6 @@ import 'dart:ui';
 class HomePge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      body: MainLayout(),
-    );
-  }
-}
-
-class MainLayout extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
     return CustomScrollView(slivers: <Widget>[
       SliverToBoxAdapter(
           child: Column(children: <Widget>[
@@ -80,7 +71,8 @@ class ListState extends State<ListLayout> {
   Widget build(BuildContext context) {
     return SliverList(
         delegate: SliverChildBuilderDelegate((BuildContext context, int index) {
-      return Container(
+      return AnimatedContainer(
+          duration: Duration(seconds: 1),
           margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
           color: Colors.white,
           child: InkWell(

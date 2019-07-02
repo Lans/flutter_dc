@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'mainPage.dart';
+import 'package:flutter_dc/login.dart';
+import 'package:flutter_dc/mainPage.dart';
+import 'package:flutter_dc/setting.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() => runApp(MyApp());
 
@@ -8,14 +11,40 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Flutter Demo',
-        theme: ThemeData(
-          appBarTheme: AppBarTheme(
-              color: Colors.white,
-              iconTheme: IconThemeData(color: Colors.black),
-              elevation: 0),
-        ),
-        home: MyHomePage());
+      debugShowCheckedModeBanner: false,
+      title: 'Flutter Demo',
+      theme: ThemeData(
+        appBarTheme: AppBarTheme(
+            color: Colors.white,
+            iconTheme: IconThemeData(color: Colors.black),
+            elevation: 0),
+      ),
+      initialRoute: "/",
+      routes: {
+        "/": (context) => FutureBuilder<String>(
+              future: _getUser(),
+              builder: (BuildContext context,
+                  AsyncSnapshot<String> sharedPreferences) {
+                if (sharedPreferences.connectionState ==
+                    ConnectionState.done) {}
+                if (sharedPreferences.data.toString().isEmpty) {
+                  return LoginPage();
+                } else {
+                  return MyHomePage();
+                }
+              },
+            ),
+        "/login": (context) => LoginPage(),
+        "/setting": (context) => SettingPage(),
+      },
+    );
+  }
+
+  static Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+
+  static Future<String> _getUser() async {
+    final SharedPreferences prefs = await _prefs;
+    final String num = (prefs.getString('userId') ?? "");
+    return num;
   }
 }

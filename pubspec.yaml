@@ -14,7 +14,7 @@ description: A new Flutter application.
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.2.2 <3.0.0"
 
 dependencies:
   flutter:
@@ -25,6 +25,21 @@ dependencies:
   cupertino_icons: ^0.1.2
   #app相关信息
   package_info: ^0.4.0+4
+  #网络请求
+  dio: ^2.1.7
+  #toast
+  toast: ^0.1.4
+  #md5
+  crypto: ^2.0.6
+  #sp
+  shared_preferences: ^0.5.3+1
+  #dialog
+  multiple_dialog: ^0.1.5
+  device_info: ^0.4.0+2
+  #json
+  json_serializable: ^3.0.0
+  json_annotation: ^2.4.0
+  build_runner: ^1.0.0
 
 dev_dependencies:
   flutter_test:

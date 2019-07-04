@@ -1,15 +1,17 @@
 import 'dart:async';
-import 'dart:convert';
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_dc/Utils/Strings.dart';
 import 'package:flutter_dc/http/ApiUrl.dart';
 import 'package:multiple_dialog/multiple_dialog.dart';
 import 'package:package_info/package_info.dart';
-import 'package:toast/toast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:toast/toast.dart';
+
 import 'bean/login_bean.dart';
 
 class LoginPage extends StatefulWidget {
@@ -154,6 +156,7 @@ class LoginPageState extends State<LoginPage> {
     showLoadingDialog(context: context, barrierDismissible: true);
   }
 
+  //参数获取
   loginHttp() async {
     String ver = "";
     String model = "";
@@ -163,32 +166,44 @@ class LoginPageState extends State<LoginPage> {
               ver = packageInfo.version,
             })
         .whenComplete(() {
-      DeviceInfoPlugin()
-          .androidInfo
-          .then((info) => {model = info.model, id = info.androidId})
-          .whenComplete(() {
-        ApiUrl().loginHttp(telStr, codeStr, ver, model, id).then((res) {
-          var json = jsonEncode(res.data);
-          var userMap = jsonDecode(json);
-          var loginBean = LoginBean.fromJson(userMap);
-          if (loginBean.code == 1000) {
-            Navigator.pop(context);
-            Toast.show(Strings.loginSuccess, context);
-            SharedPreferences.getInstance()
-              ..then((sp) {
-                sp.setString("userId", loginBean.data.userId.toString());
-                sp.setString("userTel", loginBean.data.phone.toString());
-              }).whenComplete(() {
-                Navigator.pushNamed(context, "/");
-              });
-          } else {
-            Toast.show(loginBean.msg, context);
-          }
-        }).catchError((e) {
-          print(Strings.errorMsg + e.toString());
-          Navigator.pop(context);
+      var device = DeviceInfoPlugin();
+      if (Platform.isAndroid) {
+        device.androidInfo
+            .then((info) => {model = info.model, id = info.androidId})
+            .whenComplete(() {
+          http(ver, model, id);
         });
-      });
+      } else if (Platform.isIOS) {
+        device.iosInfo
+            .then((info) => {model = info.model, id = info.identifierForVendor})
+            .whenComplete(() {
+          http(ver, model, id);
+        });
+      }
+    });
+  }
+
+//真正的请求
+  http(String ver, String model, String id) {
+    ApiUrl().loginHttp(telStr, codeStr, ver, model, id).then((res) {
+      var loginBean = LoginBean.fromJson(res.data);
+      if (loginBean.code == 1000) {
+        Navigator.pop(context);
+        Toast.show(Strings.loginSuccess, context);
+        SharedPreferences.getInstance()
+          .then((sp) {
+            sp.setString("userId", loginBean.data.userId.toString());
+            sp.setString("userTel", loginBean.data.phone.toString());
+          }).whenComplete(() {
+            Navigator.pushNamed(context, "/");
+          });
+      } else {
+        Navigator.pop(context);
+        Toast.show(loginBean.msg, context);
+      }
+    }).catchError((e) {
+      print(Strings.errorMsg + e.toString());
+      Navigator.pop(context);
     });
   }
 }

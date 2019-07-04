@@ -18,7 +18,7 @@ class _MyHomePage extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    _textWidget = [HomePge(), FindPage(), MePage()];
+    _textWidget = [HomePage(), FindPage(), MePage()];
   }
 
   @override

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -44,7 +45,7 @@ class LoginPageState extends State<LoginPage> {
     _timer = Timer.periodic(Duration(seconds: 1), call);
   }
 
-  String handleCodeText() {
+  String handleCodeAutoSizeText() {
     if (countdownTime > 0) {
       return "${countdownTime}s后重新获取";
     } else
@@ -100,8 +101,8 @@ class LoginPageState extends State<LoginPage> {
                               startCountdown();
                             }
                           },
-                          child: Text(
-                            handleCodeText(),
+                          child: AutoSizeText(
+                            handleCodeAutoSizeText(),
                             style: TextStyle(
                                 color: Color.fromRGBO(21, 201, 187, 1)),
                           ),
@@ -118,7 +119,7 @@ class LoginPageState extends State<LoginPage> {
                 textColor: Colors.white,
                 minWidth: window.physicalSize.width,
                 color: Color.fromRGBO(21, 201, 187, 1),
-                child: Text(
+                child: AutoSizeText(
                   "登录",
                   style: TextStyle(fontSize: 13),
                 ),

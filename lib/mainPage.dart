@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dc/find.dart';
 import 'package:flutter_dc/me.dart';
@@ -27,10 +28,10 @@ class _MyHomePage extends State<MyHomePage> {
       body: Center(child: _textWidget[index]),
       bottomNavigationBar: BottomNavigationBar(
         items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(icon: Icon(Icons.home), title: Text("首页")),
+          BottomNavigationBarItem(icon: Icon(Icons.home), title: AutoSizeText("首页")),
           BottomNavigationBarItem(
-              icon: Icon(Icons.contacts), title: Text("发现")),
-          BottomNavigationBarItem(icon: Icon(Icons.people), title: Text("我的"))
+              icon: Icon(Icons.contacts), title: AutoSizeText("发现")),
+          BottomNavigationBarItem(icon: Icon(Icons.people), title: AutoSizeText("我的"))
         ],
         currentIndex: index,
         onTap: _onItemTaped,

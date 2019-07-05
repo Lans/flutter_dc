@@ -1,21 +1,47 @@
 import 'dart:ui';
 
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dc/bean/home_bean.dart';
 import 'package:flutter_dc/provider/HomeProvider.dart';
 import 'package:provider/provider.dart';
 
-class HomePage extends StatelessWidget {
+import 'http/ApiUrl.dart';
+
+class HomePage extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    return HomePageState();
+  }
+}
+
+class HomePageState extends State<HomePage> {
+  Future<HomeBean> homeBeanFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    homeBeanFuture = getHomeData();
+  }
+
+  Future<HomeBean> getHomeData() async {
+    HomeBean homeBean;
+    await ApiUrl.instance.homeHttp().then((res) {
+      homeBean = HomeBean.fromJson(res.data);
+    });
+    return homeBean;
+  }
+
   @override
   Widget build(BuildContext context) {
     final homeProvider = Provider.of<HomeProvider>(context);
-    homeProvider.getHome();
-    return StreamBuilder<HomeBean>(
-        stream: homeProvider.homeBeanSteam,
+    homeProvider.transformerData(homeBeanFuture);
+    return FutureBuilder<HomeBean>(
+        future: homeBeanFuture,
         builder: (BuildContext context, AsyncSnapshot<HomeBean> snapshot) {
           if (snapshot.hasError) {
             return Container(
-              child: Text("请求失败"),
+              child: AutoSizeText("请求失败"),
             );
           }
           switch (snapshot.connectionState) {
@@ -45,7 +71,7 @@ class HomePage extends StatelessWidget {
                             width: 100,
                             height: 20,
                           ),
-                          Text(
+                          AutoSizeText(
                             "1321xxxx123以获取1000元",
                             style: TextStyle(color: Colors.black54),
                           )
@@ -74,20 +100,6 @@ class HomePage extends StatelessWidget {
                         margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
                         color: Colors.white,
                         child: InkWell(
-                          onTap: () {
-                            print("the is the item of $index");
-                            final snackBar = SnackBar(
-                              content: Text("the is the item of $index"),
-                              duration: Duration(seconds: 2),
-                              action: SnackBarAction(
-                                  label: "取消",
-                                  onPressed: () {
-                                    Scaffold.of(context).hideCurrentSnackBar(
-                                        reason: SnackBarClosedReason.dismiss);
-                                  }),
-                            );
-                            Scaffold.of(context).showSnackBar(snackBar);
-                          },
                           child: Column(
                             children: <Widget>[
                               Padding(
@@ -107,21 +119,21 @@ class HomePage extends StatelessWidget {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: <Widget>[
-                                            Text(
+                                            AutoSizeText(
                                               product.name,
                                               style: TextStyle(
                                                 color: Colors.black,
                                                 fontSize: 15,
                                               ),
                                             ),
-                                            Text(
+                                            AutoSizeText(
                                               "${product.borrowingBalanceMin}~${product.borrowingBalanceMax}元",
                                               style: TextStyle(
                                                 color: Colors.red,
                                                 fontSize: 15,
                                               ),
                                             ),
-                                            Text("${product.applyNums}人申请",
+                                            AutoSizeText("${product.applyNums}人申请",
                                                 style: TextStyle(
                                                   color: Colors.black26,
                                                   fontSize: 12,
@@ -134,7 +146,7 @@ class HomePage extends StatelessWidget {
                                         textColor: Colors.white,
                                         color: Color.fromRGBO(21, 201, 187, 1),
                                         height: 30,
-                                        child: Text(
+                                        child: AutoSizeText(
                                           "立即申请",
                                           style: TextStyle(fontSize: 13),
                                         ),
@@ -161,11 +173,11 @@ class HomePage extends StatelessWidget {
                 ],
               );
             case ConnectionState.none:
-              return Text("none");
+              return AutoSizeText("none");
             case ConnectionState.active:
               break;
           }
-          return Text("empty");
+          return AutoSizeText("empty");
         });
   }
 }

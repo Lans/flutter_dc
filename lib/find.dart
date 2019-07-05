@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
@@ -116,12 +117,12 @@ class FindWidgetState extends State<FindWidget> {
 
   Widget buildTab(TabBean tab) {
     if (tab.index == 1) {
-      return Text(
+      return AutoSizeText(
         tab.text,
         style: TextStyle(fontSize: 18),
       );
     } else {
-      return Text(
+      return AutoSizeText(
         tab.text,
         style: TextStyle(fontSize: 15),
       );
@@ -152,7 +153,7 @@ class _GridViewLayoutState extends State<GridViewLayout> {
                   height: 50,
                 ),
               ),
-              new Text(
+              new AutoSizeText(
                 "申请人数",
                 style: TextStyle(color: Colors.black26, fontSize: 12),
               ),
@@ -168,12 +169,12 @@ class _GridViewLayoutState extends State<GridViewLayout> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        Text("app名",
+                        AutoSizeText("app名",
                             style:
                                 TextStyle(color: Colors.black, fontSize: 14)),
                         Padding(
                           padding: const EdgeInsets.only(top: 5),
-                          child: Text("1000~10000元",
+                          child: AutoSizeText("1000~10000元",
                               style:
                                   TextStyle(color: Colors.red, fontSize: 12)),
                         ),
@@ -186,7 +187,7 @@ class _GridViewLayoutState extends State<GridViewLayout> {
                     child: FlatButton(
                         textColor: Colors.white,
                         color: Color.fromRGBO(21, 201, 187, 1),
-                        child: Text(
+                        child: AutoSizeText(
                           "立即申请",
                           style: TextStyle(fontSize: 12),
                         ),

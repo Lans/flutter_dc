@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -40,7 +41,7 @@ class MePageState extends State<MePage> {
                 children: <Widget>[
                   Row(
                     children: <Widget>[
-                      Text(
+                      AutoSizeText(
                         "我的",
                         style: TextStyle(
                             color: Colors.black,
@@ -54,7 +55,7 @@ class MePageState extends State<MePage> {
                                 AsyncSnapshot<String> syn) {
                               if (syn.connectionState == ConnectionState.done) {
                                 if (syn.data.toString().isNotEmpty) {
-                                  return Text(
+                                  return AutoSizeText(
                                     syn.data.toString(),
                                     textAlign: TextAlign.end,
                                     style: TextStyle(
@@ -64,7 +65,7 @@ class MePageState extends State<MePage> {
                                   );
                                 }
                               }
-                              return Text(
+                              return AutoSizeText(
                                 "请重新登录",
                                 textAlign: TextAlign.end,
                                 style: TextStyle(
@@ -108,7 +109,7 @@ class MePageState extends State<MePage> {
                                 width: 20,
                               ),
                             ),
-                            Text(
+                            AutoSizeText(
                               list[index],
                               style: TextStyle(fontSize: 14),
                             ),

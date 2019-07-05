@@ -45,7 +45,9 @@ class MyApp extends StatelessWidget {
               ),
           "/login": (context) => LoginPage(),
           "/setting": (context) => SettingPage(),
-          "/web": (context) => WebPage(id: Provider.of<HomeProvider>(context).productId,),
+          "/web": (context) => WebPage(
+                id: Provider.of<HomeProvider>(context).productId,
+              ),
         },
       ),
     );

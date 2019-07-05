@@ -2,16 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dc/bean/home_bean.dart';
-import 'package:flutter_dc/http/ApiUrl.dart';
 
 class HomeProvider with ChangeNotifier {
-  Stream<HomeBean> _homeBeanSteam;
-
   int _productId;
 
   int get productId => _productId;
-
-  Stream<HomeBean> get homeBeanSteam => _homeBeanSteam;
 
   List<Product> _productList = [];
 
@@ -26,17 +21,16 @@ class HomeProvider with ChangeNotifier {
 
   List<String> get strList => _strList;
 
-  void getHome() {
-    _homeBeanSteam = ApiUrl.instance.homeHttp().asStream().map((res) {
-      HomeBean homeBean = HomeBean.fromJson(res.data);
-      productList.clear();
-      productList.addAll(homeBean.data.product);
-    });
-  }
-
   int getId(int index) {
     _productId = _productList[index].productId;
     notifyListeners();
     return _productId;
+  }
+
+  void transformerData(Future<HomeBean> homeBeanFuture) {
+    homeBeanFuture.then((res) {
+      productList.clear();
+      productList.addAll(res.data.product);
+    });
   }
 }

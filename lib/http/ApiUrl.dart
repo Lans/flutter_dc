@@ -56,4 +56,10 @@ class ApiUrl {
     _map['user_id'] = userId;
     return await httpHelper.dio.post(_url, data: _map);
   }
+
+  Future<Response> findHttp(int category) async {
+    _map = Map();
+    _map['category'] = category;
+    return await httpHelper.dio.post(_borrow, data: _map);
+  }
 }

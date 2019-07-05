@@ -71,6 +71,7 @@ class WebPageState extends State<WebPage> {
                     return WebView(
                       debuggingEnabled: true,
                       initialUrl: webBean.data.url,
+
                     );
                   } else {
                     return Center(child: AutoSizeText("地址有误"));

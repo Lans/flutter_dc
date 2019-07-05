@@ -1,9 +1,7 @@
 class TabBean {
-  var index;
+  int index;
   String text;
+  int categoryId;
 
-  TabBean(String text, int index) {
-    this.index = index;
-    this.text = text;
-  }
+  TabBean(this.text, this.index, this.categoryId);
 }

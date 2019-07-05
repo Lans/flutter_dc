@@ -4,10 +4,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_dc/bean/home_bean.dart';
 
 class HomeProvider with ChangeNotifier {
-  int _productId;
-
-  int get productId => _productId;
-
   List<Product> _productList = [];
 
   List<Product> get productList => _productList;
@@ -20,12 +16,6 @@ class HomeProvider with ChangeNotifier {
   ];
 
   List<String> get strList => _strList;
-
-  int getId(int index) {
-    _productId = _productList[index].productId;
-    notifyListeners();
-    return _productId;
-  }
 
   void transformerData(Future<HomeBean> homeBeanFuture) {
     homeBeanFuture.then((res) {

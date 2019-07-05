@@ -7,6 +7,7 @@ import 'package:flutter_dc/provider/HomeProvider.dart';
 import 'package:provider/provider.dart';
 
 import 'http/ApiUrl.dart';
+import 'provider/ProductIdProvider.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -35,6 +36,7 @@ class HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final homeProvider = Provider.of<HomeProvider>(context);
+    final productIdProvider = Provider.of<ProductIdProvider>(context);
     homeProvider.transformerData(homeBeanFuture);
     return FutureBuilder<HomeBean>(
         future: homeBeanFuture,
@@ -133,7 +135,8 @@ class HomePageState extends State<HomePage> {
                                                 fontSize: 15,
                                               ),
                                             ),
-                                            AutoSizeText("${product.applyNums}人申请",
+                                            AutoSizeText(
+                                                "${product.applyNums}人申请",
                                                 style: TextStyle(
                                                   color: Colors.black26,
                                                   fontSize: 12,
@@ -154,7 +157,8 @@ class HomePageState extends State<HomePage> {
                                             borderRadius:
                                                 BorderRadius.circular(60)),
                                         onPressed: () {
-                                          homeProvider.getId(index);
+                                          productIdProvider
+                                              .setId(product.productId);
                                           Navigator.pushNamed(context, "/web");
                                         }),
                                   ],

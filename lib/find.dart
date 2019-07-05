@@ -1,8 +1,13 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
 
 import 'bean/TabBean.dart';
+import 'bean/home_bean.dart';
+import 'http/ApiUrl.dart';
+import 'provider/FindProvider.dart';
+import 'provider/ProductIdProvider.dart';
 
 class FindPage extends StatelessWidget {
   @override
@@ -22,23 +27,39 @@ class FindWidget extends StatefulWidget {
 
 class FindWidgetState extends State<FindWidget> {
   TabController tabController;
-  int size = 5;
   var tabs = [
-    new TabBean("小额秒贷", 1),
-    new TabBean("大额畅享", 0),
-    new TabBean("信用卡", 0)
+    new TabBean("小额秒贷", 1, 3),
+    new TabBean("大额畅享", 0, 3),
+    new TabBean("信用卡", 0, 4)
   ];
+
+  Future<HomeBean> productsFuture;
+
+  Future<HomeBean> getCategory(List<TabBean> tabList) async {
+    var homeBean;
+    var categoryId;
+    tabList.forEach((tab) {
+      if (tab.index == 1) {
+        categoryId = tab.categoryId;
+      }
+    });
+    await ApiUrl.instance.findHttp(categoryId).then((res) {
+      homeBean = HomeBean.fromJson(res.data);
+    });
+    return homeBean;
+  }
 
   @override
   void initState() {
     super.initState();
+    productsFuture = getCategory(tabs);
     tabController = TabController(length: 3, vsync: ScaffoldState())
       ..addListener(() {
         if (tabController.indexIsChanging) {
           var tabs = [
-            new TabBean("小额秒贷", 1),
-            new TabBean("大额畅享", 0),
-            new TabBean("信用卡", 0)
+            new TabBean("小额秒贷", 1, 3),
+            new TabBean("大额畅享", 0, 3),
+            new TabBean("信用卡", 0, 4)
           ];
           int length;
           switch (tabController.index) {
@@ -61,7 +82,7 @@ class FindWidgetState extends State<FindWidget> {
           }
           setState(() {
             this.tabs = tabs;
-            this.size = length;
+            productsFuture = getCategory(tabs);
           });
         }
       });
@@ -97,20 +118,52 @@ class FindWidgetState extends State<FindWidget> {
             maxHeight: 80,
           ),
         ),
-        SliverPadding(
-          padding: const EdgeInsets.all(5.0),
-          sliver: SliverGrid(
-            delegate:
-                SliverChildBuilderDelegate((BuildContext context, int index) {
-              return GridViewLayout();
-            }, childCount: size),
-            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 200,
-                mainAxisSpacing: 5,
-                crossAxisSpacing: 5,
-                childAspectRatio: 2),
-          ),
-        ),
+        FutureBuilder(
+            future: productsFuture,
+            builder: (_, AsyncSnapshot<HomeBean> snapshot) {
+              if (snapshot.hasError) {
+                return SliverToBoxAdapter(
+                  child: Center(
+                    child: AutoSizeText("请求失败"),
+                  ),
+                );
+              }
+              switch (snapshot.connectionState) {
+                case ConnectionState.none:
+                case ConnectionState.active:
+                case ConnectionState.waiting:
+                  return SliverToBoxAdapter(
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minHeight: MediaQuery.of(context).size.height,
+                      ),
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    ),
+                  );
+                case ConnectionState.done:
+                  final home = snapshot.data;
+                  final findProvider = Provider.of<FindProvider>(context);
+                  findProvider.transformerData(home);
+                  return SliverPadding(
+                    padding: const EdgeInsets.all(5.0),
+                    sliver: SliverGrid(
+                      delegate: SliverChildBuilderDelegate(
+                          (BuildContext context, int index) {
+                        findProvider.getProduct(index);
+                        return GridViewLayout();
+                      }, childCount: home.data.product.length),
+                      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                          maxCrossAxisExtent: 200,
+                          mainAxisSpacing: 5,
+                          crossAxisSpacing: 5,
+                          childAspectRatio: 2),
+                    ),
+                  );
+              }
+              return SliverToBoxAdapter(child: AutoSizeText("empty"));
+            }),
       ],
     );
   }
@@ -137,7 +190,11 @@ class GridViewLayout extends StatefulWidget {
 class _GridViewLayoutState extends State<GridViewLayout> {
   @override
   Widget build(BuildContext context) {
-    return Container(
+    final findProvider = Provider.of<FindProvider>(context);
+    final productIdProvider = Provider.of<ProductIdProvider>(context);
+
+    return AnimatedContainer(
+      duration: Duration(seconds: 1),
       alignment: Alignment.center,
       color: Colors.white,
       child: new Row(
@@ -147,14 +204,15 @@ class _GridViewLayoutState extends State<GridViewLayout> {
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: new Image.asset(
-                  "asset/ic_launcher.png",
+                child: new Image.network(
+                  findProvider.product.pic,
+                  fit: BoxFit.fill,
                   width: 50,
                   height: 50,
                 ),
               ),
               new AutoSizeText(
-                "申请人数",
+                "申请人数:${findProvider.product.applyNums}",
                 style: TextStyle(color: Colors.black26, fontSize: 12),
               ),
             ],
@@ -169,12 +227,13 @@ class _GridViewLayoutState extends State<GridViewLayout> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        AutoSizeText("app名",
+                        AutoSizeText(findProvider.product.name,
                             style:
                                 TextStyle(color: Colors.black, fontSize: 14)),
                         Padding(
                           padding: const EdgeInsets.only(top: 5),
-                          child: AutoSizeText("1000~10000元",
+                          child: AutoSizeText(
+                              "${findProvider.product.borrowingBalanceMin}~${findProvider.product.borrowingBalanceMax}元",
                               style:
                                   TextStyle(color: Colors.red, fontSize: 12)),
                         ),
@@ -193,7 +252,11 @@ class _GridViewLayoutState extends State<GridViewLayout> {
                         ),
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(60)),
-                        onPressed: () {}),
+                        onPressed: () {
+                          productIdProvider
+                              .setId(findProvider.product.productId);
+                          Navigator.pushNamed(context, "/web");
+                        }),
                   ),
                 ],
               )),

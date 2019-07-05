@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dc/login.dart';
 import 'package:flutter_dc/mainPage.dart';
 import 'package:flutter_dc/provider/HomeProvider.dart';
-import 'package:flutter_dc/provider/WebsProvider.dart';
 import 'package:flutter_dc/setting.dart';
 import 'package:flutter_dc/web.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'provider/FindProvider.dart';
+import 'provider/ProductIdProvider.dart';
 
 void main() => runApp(MyApp());
 
@@ -16,8 +18,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider<ProductIdProvider>.value(
+            value: ProductIdProvider()),
         ChangeNotifierProvider<HomeProvider>.value(value: HomeProvider()),
-        ChangeNotifierProvider<WebsProvider>.value(value: WebsProvider()),
+        ChangeNotifierProvider<FindProvider>.value(value: FindProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -46,7 +50,7 @@ class MyApp extends StatelessWidget {
           "/login": (context) => LoginPage(),
           "/setting": (context) => SettingPage(),
           "/web": (context) => WebPage(
-                id: Provider.of<HomeProvider>(context).productId,
+                id: Provider.of<ProductIdProvider>(context).productId,
               ),
         },
       ),
@@ -61,3 +65,4 @@ class MyApp extends StatelessWidget {
     return num;
   }
 }
+
